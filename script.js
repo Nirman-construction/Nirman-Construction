@@ -82,35 +82,11 @@
     }
     typeSelect.addEventListener('change',renderType);
 
-    // Jharkhand hierarchical location selector: District -> City/Block -> Area/Village/Mohalla
-    const district=document.getElementById('district'), cityBlock=document.getElementById('cityBlock'), locality=document.getElementById('locality'), locationHidden=document.getElementById('location'), locStatus=document.getElementById('location-status');
-    const jharkhandData={"Bokaro":["Bermo","Chandankiyari","Chas","Chandrapura","Gomia","Jaridih","Kasmar","Nawadih","Petarwar"],"Chatra":["Chatra","Hunterganj","Itkhori","Kanhachatti","Kunda","Lawalong","Mayurhand","Pathalgada","Pratappur","Simaria","Tandwa"],"Deoghar":["Deoghar","Devipur","Karon","Madhupur","Mohanpur","Palojori","Sarath","Sarwan","Sonaraithari"],"Dhanbad":["Baghmara","Baliapur","Dhanbad","Egarkund","Govindpur","Jharia","Kaliyasol","Nirsa","Topchanchi"],"Dumka":["Dumka","Gopikandar","Jama","Jarmundi","Kathikund","Masalia","Ramgarh","Raneshwar","Shikaripara","Saraiyahat"],"East Singhbhum":["Baharagora","Chakulia","Dhalbhumgarh","Dumaria","Ghatshila","Golmuri-cum-Jugsalai","Gurabandha","Musabani","Patamda","Potka"],"Garhwa":["Bhandaria","Bhawnathpur","Bishunpura","Chinia","Danda","Dandai","DhuraKi","Garhwa","Kandi","Kharaundhi","Majhiaon","Meral","Nagar Untari","Ramkanda","Ramna","Ranka","Rohiniya","Sagma"],"Giridih":["Bagodar","Bengabad","Birni","Deori","Dhanwar","Dumri","Gandey","Gawan","Giridih","Jamua","Pirtand","Sariya","Tisri"],"Godda":["Basantrai","Boarijore","Godda","Mahagama","Meharma","Pathargama","Poreyahat","Sundarpahari","Thakurgangti"],"Gumla":["Albert Ekka","Basia","Bharno","Bishunpur","Chainpur","Dumri","Gumla","Ghaghra","Kamdara","Palkot","Raidih","Sisai"],"Hazaribagh":["Barkagaon","Barkatha","Bishnugarh","Chalkusha","Chouparan","Churchu","Dadi","Daru","Hazaribagh","Ichak","Katkamsandi","Katkamdag","Keredari","Padma","Tati Jhariya"],"Jamtara":["Fatehpur","Jamtara","Karmatanr","Kundhit","Nala","Narayanpur"],"Khunti":["Arki","Khunti","Karra","Murhu","Rania","Torpa"],"Koderma":["Chandwara","Domchanch","Jainagar","Koderma","Markacho","Satgawan"],"Latehar":["Barwadih","Balumath","Chandwa","Garu","Herhanj","Latehar","Mahuadanr","Manika"],"Lohardaga":["Bhandra","Kairo","Kisko","Kuru","Lohardaga","Peshrar","Senha"],"Pakur":["Amrapara","Hiranpur","Littipara","Maheshpur","Pakur","Pakuria"],"Palamu":["Bishrampur","Chainpur","Chhatarpur","Daltonganj","Haidernagar","Hussainabad","Manatu","Medininagar","Mohammadganj","Nawa Bazar","Nawadiha Bazar","Panki","Patan","Pipra","Ramgarh","Satbarwa","Tarhasi","Untari Road"],"Ramgarh":["Chitarpur","Dulmi","Gola","Mandu","Patratu","Ramgarh"],"Ranchi":["Angara","Bero","Burmu","Chanho","Itki","Kanke","Khunti Road / Namkum","Khelari","Lapung","Mandar","Nagri","Namkum","Ormanjhi","Rahe","Ratu","Silli","Sonahatu","Tamar"],"Sahibganj":["Barhait","Borio","Mandal","Pathna","Rajmahal","Sahibganj","Taljhari","Udhwa"],"Seraikela-Kharsawan":["Adityapur-Gamharia","Chandil","Gamharia","Ichagarh","Kharsawan","Kuchai","Nimdih","Rajnagar","Seraikela"],"Simdega":["Bano","Bolba","Jaldega","Kersai","Kolebira","Kurdeg","Pakartanr","Simdega","Thethaitangar"],"West Singhbhum":["Anandpur","Bandgaon","Chaibasa","Chakradharpur","Goilkera","Gudri","Hatgamharia","Jagannathpur","Jhinkpani","Khuntpani","Kumardungi","Majhgaon","Manoharpur","Noamundi","Sonua","Tonto"]};
-    const citySeed={"Ranchi":["Ranchi","Bundu","Khunti?"],"Bokaro":["Bokaro Steel City","Chas","Phusro"],"Dhanbad":["Dhanbad","Jharia","Sindri","Katras"],"East Singhbhum":["Jamshedpur","Ghatshila","Mango","Jugsalai"],"Hazaribagh":["Hazaribagh","Barhi"],"Deoghar":["Deoghar","Madhupur"],"Giridih":["Giridih","Dumri"],"Palamu":["Medininagar","Daltonganj","Hussainabad"],"Ramgarh":["Ramgarh","Patratu"],"Seraikela-Kharsawan":["Adityapur","Seraikela","Chandil"],"Sahibganj":["Sahibganj","Rajmahal"],"West Singhbhum":["Chaibasa","Chakradharpur","Noamundi"],"Lohardaga":["Lohardaga"],"Gumla":["Gumla"],"Simdega":["Simdega"],"Khunti":["Khunti"],"Latehar":["Latehar"],"Koderma":["Koderma"],"Jamtara":["Jamtara"],"Dumka":["Dumka"],"Godda":["Godda"],"Pakur":["Pakur"],"Garhwa":["Garhwa"],"Chatra":["Chatra"]};
-    const commonAreas=['Main Road','Station Road','Bus Stand Area','Market Area','College Road','Hospital Area','Residential Colony','Industrial Area','Village Area','Mohalla / Local Area'];
-    const fill=(el,items,placeholder,disabled=false)=>{el.innerHTML='<option value="">'+placeholder+'</option>'+items.map(v=>'<option>'+v+'</option>').join('');el.disabled=disabled;};
-    if(district){
-      fill(district,Object.keys(jharkhandData).sort(),'Select District',false);
-      district.addEventListener('change',()=>{
-        const d=district.value;
-        const blocks=jharkhandData[d]||[];
-        const cities=(citySeed[d]||[]).filter(x=>!x.includes('?'));
-        fill(cityBlock,[...cities,...blocks].filter((x,i,a)=>a.indexOf(x)===i),'Select City / Block',!d);
-        fill(locality,[], 'Select Village / Block / Mohalla / Area', true);
-        locationHidden.value=''; if(locStatus)locStatus.textContent=d?'Now select City / Block.':'Select District → City / Block → Area.';
-      });
-      cityBlock.addEventListener('change',()=>{
-        const d=district.value, cb=cityBlock.value;
-        const blocks=jharkhandData[d]||[];
-        const options=[...commonAreas];
-        if(blocks.includes(cb)) options.unshift(cb+' Block Area');
-        if((citySeed[d]||[]).includes(cb)) options.unshift(cb+' Main City');
-        options.push('Other Village / Locality');
-        fill(locality,[...new Set(options)],'Select Village / Block / Mohalla / Area',!cb);
-        locationHidden.value=''; if(locStatus)locStatus.textContent=cb?'Now select the final village / locality / mohalla.':'Select City / Block.';
-      });
-      locality.addEventListener('change',()=>{
-        locationHidden.value=[district.value,cityBlock.value,locality.value].filter(Boolean).join(' → ');
-        if(locStatus)locStatus.textContent=locationHidden.value?'Location selected: '+locationHidden.value:'Select your full project location.';
+    // Project location: Jharkhand district only
+    const locationSelect=document.getElementById('location'), locStatus=document.getElementById('location-status');
+    if(locationSelect){
+      locationSelect.addEventListener('change',()=>{
+        if(locStatus) locStatus.textContent=locationSelect.value ? 'Selected: '+locationSelect.value+', Jharkhand' : 'Nirman Construction serves projects across Jharkhand.';
       });
     }
 
@@ -137,6 +113,7 @@
     function initNirmanAI(){
       const toggle=document.querySelector('.ai-toggle');
       const panel=document.querySelector('.ai-panel');
+      const widget=document.querySelector('.ai-widget');
       const close=document.querySelector('.ai-close');
       const input=document.getElementById('ai-input');
       const send=document.getElementById('ai-send');
@@ -197,8 +174,8 @@
         setTimeout(()=>add(reply(value),'bot'),180);
       };
 
-      toggle.addEventListener('click',()=>panel.classList.toggle('open'));
-      if(close) close.addEventListener('click',()=>panel.classList.remove('open'));
+      toggle.addEventListener('click',()=>widget.classList.toggle('open'));
+      if(close) close.addEventListener('click',()=>widget.classList.remove('open'));
       send.addEventListener('click',sendMessage);
       input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage();}});
       document.querySelectorAll('.ai-quick button').forEach(btn=>{
