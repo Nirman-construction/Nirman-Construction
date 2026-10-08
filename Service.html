@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Inquiry | Nirman Construction</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h2>Nirman Construction</h2>
+            <span class="tagline">Where Dreams Take Shape</span>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="services.html" class="active">Services & Inquiry</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <section class="content-section">
+        <h2>Our Core Construction Services</h2>
+        <div class="services-grid">
+            <div class="service-box"><h3>1. Residential & Commercial Building</h3><p>End-to-end construction for houses, villas, and apartments.</p></div>
+            <div class="service-box"><h3>2. Structural & RCC Work</h3><p>Robust foundations, columns, beams, and earthquake-resistant slabs.</p></div>
+            <div class="service-box"><h3>3. Brick Work & Masonry</h3><p>Precision block and brick laying with perfect alignment.</p></div>
+            <div class="service-box"><h3>4. Plastering & Wall Finishing</h3><p>Internal/external plastering with damp-proof protection.</p></div>
+            <div class="service-box"><h3>5. Putty, Painting & Surface Treatment</h3><p>Wall putty, primer, and premium interior/exterior painting.</p></div>
+            <div class="service-box"><h3>6. Tiling & Flooring Work</h3><p>Vitrified tiles, marble, granite, and wooden flooring execution.</p></div>
+            <div class="service-box"><h3>7. Electrical & Plumbing Execution</h3><p>Concealed wiring, sanitary piping, and bathroom fittings.</p></div>
+            <div class="service-box"><h3>8. Interior Design (Partnered)</h3><p>Custom false ceilings, modular kitchens, and woodwork solutions.</p></div>
+        </div>
+
+        <!-- Interactive Inquiry Form (No typing required, click options) -->
+        <div class="inquiry-form-container">
+            <h2>Quick Service Inquiry (Click to Select)</h2>
+            <form id="inquiryForm" onsubmit="sendWhatsApp(event)">
+                <label>Select Service Required:</label>
+                <div class="options-grid">
+                    <label><input type="radio" name="service" value="Residential/Villa Construction" required> Residential / Villa Construction</label>
+                    <label><input type="radio" name="service" value="Structural & RCC Work"> Structural & RCC Work</label>
+                    <label><input type="radio" name="service" value="Brickwork & Plastering"> Brickwork & Plastering</label>
+                    <label><input type="radio" name="service" value="Putty & Painting"> Putty & Painting</label>
+                    <label><input type="radio" name="service" value="Tiling & Flooring"> Tiling & Flooring</label>
+                    <label><input type="radio" name="service" value="Electrical & Plumbing"> Electrical & Plumbing</label>
+                    <label><input type="radio" name="service" value="Complete Turnkey Project"> Complete Turnkey Project</label>
+                </div>
+
+                <label for="location" style="margin-top: 20px; display:block;">Select Your Location in Ranchi / Nearby:</label>
+                <select id="location" required>
+                    <option value="">-- Select Area --</option>
+                    <option value="Bariyatu">Bariyatu</option>
+                    <option value="Mesra Road">Mesra Road</option>
+                    <option value="Kanke Road">Kanke Road</option>
+                    <option value="Morabadi">Morabadi</option>
+                    <option value="Hinoo">Hinoo</option>
+                    <option value="Lalpur">Lalpur</option>
+                    <option value="Other Ranchi Location">Other Ranchi Location</option>
+                </select>
+
+                <button type="submit" class="btn" style="margin-top: 20px; width:100%;">Send Inquiry via WhatsApp Instantly</button>
+            </form>
+        </div>
+    </section>
+
+    <a href="https://wa.me/918810424102" class="whatsapp-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+    <footer>
+        <p>&copy; 2026 Nirman Construction | Bariyatu, Ranchi - 834009</p>
+    </footer>
+
+    <script>
+        function sendWhatsApp(e) {
+            e.preventDefault();
+            const service = document.querySelector('input[name="service"]:checked').value;
+            const location = document.getElementById('location').value;
+            const text = `Hello Nirman Construction, I want to inquire about: *${service}* for my project located at *${location}*.`;
+            const url = `https://wa.me/918810424102?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>
