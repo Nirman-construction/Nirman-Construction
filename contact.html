@@ -13,79 +13,42 @@
   <div class="hero-dots page-hero-dots" aria-label="Hero image controls"><button class="hero-dot active" data-slide="0"></button><button class="hero-dot" data-slide="1"></button><button class="hero-dot" data-slide="2"></button><button class="hero-dot" data-slide="3"></button><button class="hero-dot" data-slide="4"></button></div>
 </section>
 <section class="contact-page container"><div><p class="eyebrow">GET IN TOUCH</p><h2>Ready to build your dream?</h2><p>Use the guided enquiry form. Select the options that match your project; you can also add any extra details in your own words.</p><div class="contact-info"><div><small>PHONE</small><a href="tel:8810424102">8810424102</a></div><div><small>EMAIL</small><a href="mailto:info@nirmanconstruction.net.in">info@nirmanconstruction.net.in</a></div><div><small>ADDRESS</small><p>Bariyatu, Ranchi – 834009, Jharkhand</p></div><div><small>UDYAM REGISTRATION</small><p>UDYAM-JH-20-0146326</p></div></div><div class="form-note"><strong>Prefer WhatsApp?</strong><span>Your enquiry will open in WhatsApp with all selected project details filled in.</span></div></div>
-<form id="project-form" onsubmit="return sendWhatsApp(event)">
-<div class="form-intro"><span class="smart-badge">SMART PROJECT ENQUIRY</span><h3>Tell us what you need</h3><p>Choose your project type first. The form will show only the details relevant to your enquiry.</p></div>
+<form id="project-form" class="smart-quote-form" onsubmit="return sendWhatsApp(event)">
+<div class="form-intro"><span class="smart-badge">SMART PROJECT ENQUIRY</span><h3>Tell us what you need</h3><p>Choose one requirement. The next step will automatically adapt to your selection.</p></div>
 
 <div class="form-section-title">01 · YOUR DETAILS</div>
 <div class="form-grid">
 <label>Full Name<input id="name" required placeholder="Your name"></label>
-<label>Phone / WhatsApp Number<input id="phone" required inputmode="tel" placeholder="10-digit mobile number"></label>
-<label class="full">Project Location<input id="location" placeholder="Area / locality / city"></label>
+<label>Mobile Number<input id="phone" required inputmode="tel" placeholder="10-digit mobile number"></label>
+<label class="full">Project Location
+<select id="location" required>
+<option value="">Select District in Jharkhand</option>
+<option>Bokaro</option><option>Chatra</option><option>Deoghar</option><option>Dhanbad</option><option>Dumka</option><option>East Singhbhum</option><option>Garhwa</option><option>Giridih</option><option>Godda</option><option>Gumla</option><option>Hazaribagh</option><option>Jamtara</option><option>Khunti</option><option>Koderma</option><option>Latehar</option><option>Lohardaga</option><option>Pakur</option><option>Palamu</option><option>Ramgarh</option><option>Ranchi</option><option>Sahibganj</option><option>Seraikela-Kharsawan</option><option>Simdega</option><option>West Singhbhum</option>
+</select>
+<small id="location-status" class="field-hint">Service available across Jharkhand.</small></label>
 </div>
 
 <div class="form-section-title">02 · WHAT DO YOU NEED?</div>
-<div class="project-choice-grid">
-<label class="project-choice"><input type="radio" name="projectType" value="New Project" checked><span class="choice-icon">＋</span><span><b>New Project</b><small>Build a new home or commercial property</small></span></label>
-<label class="project-choice"><input type="radio" name="projectType" value="Existing Project"><span class="choice-icon">◫</span><span><b>Existing Project</b><small>Work already started or building exists</small></span></label>
-<label class="project-choice"><input type="radio" name="projectType" value="Renovation / Repair"><span class="choice-icon">↻</span><span><b>Renovation / Repair</b><small>Repair, alteration, extension or upgrade</small></span></label>
-<label class="project-choice"><input type="radio" name="projectType" value="Interior"><span class="choice-icon">▣</span><span><b>Interior</b><small>Interior design and interior execution</small></span></label><label class="project-choice"><input type="radio" name="projectType" value="Consultation / Estimate"><span class="choice-icon">◎</span><span><b>Consultation / Estimate</b><small>Discuss scope, quantity or project cost</small></span></label>
+<label class="smart-main-label">Select your requirement
+<select id="projectType" required>
+<option value="">Choose one</option>
+<option value="New Project">＋ New Project</option>
+<option value="Existing Project">◫ Existing Project</option>
+<option value="Interior">▣ Interior</option>
+<option value="Renovation / Repair">↻ Renovation / Repair</option>
+<option value="Designing">✦ Designing</option>
+<option value="Consultation / Estimate">◎ Consultation / Estimate</option>
+</select></label>
+
+<div id="dynamic-fields" class="dynamic-fields" hidden>
+<div class="smart-fields-title" id="dynamic-title">PROJECT DETAILS</div>
+<div id="dynamic-content"></div>
 </div>
 
-<div id="new-project-fields" class="smart-fields">
-<div class="smart-fields-title">NEW PROJECT DETAILS</div>
-<div class="form-grid">
-<label>Property Type<select id="propertyType"><option>Residential</option><option>Commercial</option><option>Residential + Commercial</option></select></label>
-<label>Construction Scope<select id="newScope"><option>Structure to Finishing</option><option>RCC / Structure Only</option><option>Brickwork & Plaster</option><option>Finishing Work</option><option>Turnkey Construction</option></select></label>
-<label>Plot / Site Size<select id="plotSize"><option>Not sure / Not decided</option><option>Below 1,000 sq.ft</option><option>1,000–1,500 sq.ft</option><option>1,500–2,000 sq.ft</option><option>2,000–3,000 sq.ft</option><option>3,000–5,000 sq.ft</option><option>Above 5,000 sq.ft</select></label>
-<label>Floors / Level<select id="floor"><option>Ground / Single Floor</option><option>G+1</option><option>G+2</option><option>G+3</option><option>G+4 or more</option><option>Basement / Parking</option><option>Multiple levels / Not sure</option></select></label>
-<label>Expected Start<select id="timeline"><option>As soon as possible</option><option>Within 1 month</option><option>1–3 months</option><option>3–6 months</option><option>6+ months</option><option>Just planning / enquiry</option></select></label>
-<label>Approx. Built-up Area<input id="builtArea" placeholder="e.g. 2,000 sq.ft"></label>
-</div>
-</div>
-
-<div id="existing-project-fields" class="smart-fields" hidden>
-<div class="smart-fields-title">EXISTING PROJECT DETAILS</div>
-<div class="form-grid">
-<label>Current Work Stage<select id="existingStage"><option>Work not started / existing building</option><option>Foundation / footing</option><option>RCC / structure in progress</option><option>Brickwork / masonry</option><option>Plaster work</option><option>Electrical / plumbing</option><option>Finishing work</option></select></label>
-<label>Required Work<select id="existingWork"><option>Complete remaining work</option><option>RCC / structural work</option><option>Brickwork & plaster</option><option>Electrical & plumbing</option><option>Tiles / flooring</option><option>Putty / paint</option><option>Repair / strengthening</option></select></label>
-<label>Building / Project Age<select id="buildingAge"><option>New / under construction</option><option>Less than 5 years</option><option>5–10 years</option><option>10–20 years</option><option>20+ years</option><option>Not sure</option></select></label>
-<label>Approx. Area<input id="existingArea" placeholder="e.g. 1,500 sq.ft"></label>
-<label class="full">What needs to be done?<input id="existingIssue" placeholder="Briefly describe the pending work, damage, alteration or requirement"></label>
-</div>
-</div>
-
-<div id="interior-fields" class="smart-fields" hidden><div class="smart-fields-title">INTERIOR DETAILS</div><div class="form-grid">
-<label>Interior Area<select id="interiorArea"><option>Whole Home</option><option>Living Room</option><option>Bedroom</option><option>Kitchen</option><option>Bathroom</option><option>Office / Commercial</option><option>Multiple Areas</option></select></label>
-<label>Interior Style<select id="interiorStyle"><option>Modern</option><option>Modern Classic</option><option>Minimalist</option><option>Luxury</option><option>Contemporary</option><option>Not sure — need advice</option></select></label>
-<label>Work Required<select id="interiorWork"><option>Design + Execution</option><option>Execution Only</option><option>Modular Kitchen</option><option>Wardrobe / Storage</option><option>False Ceiling & Lighting</option><option>Complete Interior</option></select></label>
-<label>Approx. Area<input id="interiorSqft" placeholder="e.g. 1,200 sq.ft"></label>
-</div></div>
-<div id="consultation-fields" class="smart-fields" hidden>
-<div class="smart-fields-title">CONSULTATION DETAILS</div>
-<div class="form-grid">
-<label>Requirement<select id="consultationType"><option>Construction Estimate</option><option>Site / Work Consultation</option><option>Quantity / BOQ Discussion</option><option>Rate / Quotation Discussion</option><option>Structural / Civil Work Discussion</option><option>Other</option></select></label>
-<label>Preferred Contact<select id="preferredContact"><option>WhatsApp</option><option>Phone Call</option><option>Email</option></select></label>
-</div>
-</div>
-
-<div class="form-section-title">03 · SERVICES YOU NEED <span>(select one or more)</span></div>
-<div class="service-options">
-<label><input type="checkbox" name="services" value="Residential Construction">Residential Construction</label>
-<label><input type="checkbox" name="services" value="Commercial Construction">Commercial Construction</label>
-<label><input type="checkbox" name="services" value="RCC & Structural Works">RCC & Structural Works</label>
-<label><input type="checkbox" name="services" value="Brickwork & Plaster">Brickwork & Plaster</label>
-<label><input type="checkbox" name="services" value="Electrical Work">Electrical Work</label>
-<label><input type="checkbox" name="services" value="Plumbing Work">Plumbing Work</label>
-<label><input type="checkbox" name="services" value="Tiles & Flooring">Tiles & Flooring</label>
-<label><input type="checkbox" name="services" value="Putty & Paint">Putty & Paint</label>
-<label><input type="checkbox" name="services" value="Renovation & Repair">Renovation & Repair</label>
-<label><input type="checkbox" name="services" value="Waterproofing">Waterproofing</label>
-<label class="turnkey-choice"><input type="checkbox" id="turnkey" name="services" value="Turnkey Construction">★ Turnkey Construction — multiple services together</label>
-</div>
-
-<label class="message-label">Additional Requirements<textarea id="message" rows="5" placeholder="Anything else you want us to know: rooms, drawings available, budget, special requirements, photos/site details, etc."></textarea></label>
+<div class="form-section-title">03 · ANYTHING ELSE?</div>
+<label class="message-label">Additional Requirement<textarea id="message" rows="4" placeholder="Briefly tell us anything important about your project..."></textarea></label>
 <button class="btn gold form-submit" type="submit">Send Enquiry on WhatsApp →</button>
-<p class="form-small">Your selected details will be prepared as a WhatsApp message. No WhatsApp login is required on the website itself.</p>
+<p class="form-small">Your selected details will be prepared automatically in WhatsApp.</p>
 </form></section>
 <footer><div class="container footer-grid"><div><img class="footer-logo" src="logo.png" alt="Nirman Construction logo"><p>Where Dreams Take Shape.</p></div><div><h4>QUICK LINKS</h4><a href="index.html">Home</a><a href="about.html">About</a><a href="why-us.html">Why Us</a><a href="services.html">Services</a><a href="portfolio.html">Projects</a></div><div><h4>CONTACT</h4><p>Bariyatu, Ranchi – 834009, Jharkhand</p><a href="tel:8810424102">8810424102</a></div><div><h4>EMAIL</h4><a href="mailto:info@nirmanconstruction.net.in">info@nirmanconstruction.net.in</a></div></div><div class="container copyright">© 2026 Nirman Construction · UDYAM-JH-20-0146326</div></footer>
-<div class="floating-contact"><a class="quick-contact call" href="tel:+918810424102" aria-label="Call Nirman Construction"><span>☎</span><small>Call</small></a><a class="quick-contact whatsapp" href="https://wa.me/918810424102?text=Hello%20Nirman%20Construction%2C%20I%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="WhatsApp"><span>◔</span><small>WhatsApp</small></a><div id="ai-assistant" class="ai-widget"><button class="ai-toggle" aria-label="Open Nirman AI"><span>♟</span><b>Nirman AI</b></button><div class="ai-panel"><div class="ai-head"><div><strong>Nirman AI</strong><small>Construction & Interior Assistant</small></div><button class="ai-close">×</button></div><div class="ai-messages" id="ai-messages"><div class="ai-msg bot">Namaste! 👋 Main Nirman AI hoon. Construction, renovation, interior, estimate aur project process ke baare mein pooch sakte hain.</div></div><div class="ai-quick"><button data-ai="services">Services</button><button data-ai="turnkey">Turnkey?</button><button data-ai="interior">Interior</button><button data-ai="quote">Get Quote</button></div><div class="ai-input"><input id="ai-input" placeholder="Ask Nirman AI..."><button id="ai-send">Send</button></div><a class="ai-wa" href="https://wa.me/918810424102?text=Hello%20Nirman%20AI%2C%20I%20was%20chatting%20on%20your%20website%20and%20want%20to%20continue%20on%20WhatsApp." target="_blank" rel="noopener">💬 Continue this chat on WhatsApp</a></div></div></div><script src="script.js"></script></body></html>
+<div class="floating-contact"><a class="quick-contact call" href="tel:+918810424102" aria-label="Call Nirman Construction"><span>☎</span><small>Call</small></a><a class="quick-contact whatsapp" href="https://wa.me/918810424102?text=Hello%20Nirman%20Construction%2C%20I%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="WhatsApp"><span>◔</span><small>WhatsApp</small></a><div id="ai-assistant" class="ai-widget"><button class="ai-toggle" aria-label="Open AI"><span>♟</span><b>AI</b></button><div class="ai-panel"><div class="ai-head"><div><strong>AI</strong><small>Construction & Interior Assistant</small></div><button class="ai-close">×</button></div><div class="ai-messages" id="ai-messages"><div class="ai-msg bot">Namaste! 👋 Main AI hoon. Construction, renovation, interior, estimate aur project process ke baare mein pooch sakte hain.</div></div><div class="ai-quick"><button data-ai="services">Services</button><button data-ai="turnkey">Turnkey?</button><button data-ai="interior">Interior</button><button data-ai="quote">Get Quote</button></div><div class="ai-input"><input id="ai-input" placeholder="Ask AI..."><button id="ai-send">Send</button></div><a class="ai-wa" href="https://wa.me/918810424102?text=Hello%20AI%2C%20I%20was%20chatting%20on%20your%20website%20and%20want%20to%20continue%20on%20WhatsApp." target="_blank" rel="noopener">💬 Continue this chat on WhatsApp</a></div></div></div><script src="script.js"></script></body></html>
