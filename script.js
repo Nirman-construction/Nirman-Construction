@@ -1,5 +1,5 @@
 (function(){
-  const slides=[...document.querySelectorAll('.hero-slide')], dots=[...document.querySelectorAll('.hero-dot')];
+  const slides=[...document.querySelectorAll('.hero-slide, .page-hero-slide')], dots=[...document.querySelectorAll('.hero-dot')];
   let current=0,timer;
   function showSlide(i){if(!slides.length)return;current=(i+slides.length)%slides.length;slides.forEach((s,n)=>s.classList.toggle('active',n===current));dots.forEach((d,n)=>d.classList.toggle('active',n===current));}
   function start(){if(slides.length>1){clearInterval(timer);timer=setInterval(()=>showSlide(current+1),5500);}}
@@ -57,7 +57,7 @@
       if(has(x,['plumbing','pipe','water line','drainage','toilet','bathroom','sanitary'])) return 'Plumbing planning mein water supply, hot/cold lines where required, soil/waste pipes, floor traps, vents, tank/pump connections aur kitchen/toilet points coordinate kiye jaate hain. Drainage slope aur access points bhi important hain.';
       if(has(x,['tile','tiles','flooring','marble','granite'])) return 'Tiles/flooring mein room layout, tile size, slope, level, joint alignment, skirting, wastage aur material selection pehle plan kiye jaate hain. Bathroom/kitchen areas mein required slope aur anti-skid selection important hai.';
       if(has(x,['paint','putty','primer','colour','color'])) return 'Painting sequence usually surface preparation → putty where required → sanding → primer → finish coats hota hai. Dampness/leakage ko paint se pehle address karna important hai.';
-      if(has(x,['interior','kitchen','bedroom','living room','wardrobe','false ceiling','tv unit'])) return 'Residential interior mein kitchen, bedroom, living/dining, bathroom aur utility areas plan kiye ja sakte hain. Kitchen mein counter/storage/lighting; bedroom mein wardrobe/bed-back; living mein TV unit/feature wall; aur false ceiling/electrical points ko room layout ke saath coordinate karna useful hai.';
+      if(has(x,['interior','kitchen','bedroom','living room','wardrobe','false ceiling','tv unit','modular kitchen','interior design'])) return 'Nirman Construction interior work mein concept/design, modular kitchen, wardrobe & storage, TV unit/feature wall, false ceiling, lighting coordination, bedroom, living/dining, bathroom finishes aur complete interior execution shamil ho sakta hai. Aap style, area aur required rooms bata den to scope ko better define kiya ja sakta hai.';
       if(has(x,['estimate','estimation','boq','quantity','cost','rate','budget','kitna lagega','kitne ka'])) return 'Estimate banane ke liye plot/built-up area, floors, structure scope, wall material, finish level, electrical/plumbing/interior scope, location aur material specifications chahiye. Aap area + floors + new/existing project + required services bata den, main estimate ke liye required inputs list kar dunga. Exact rate site/scope ke bina assume nahi karna chahiye.';
       if(has(x,['1000 sqft','1000 sq ft','1200 sqft','1500 sqft','2000 sqft'])) return 'Area mil gaya. Ab floors (G+1/G+2 etc.), new ya existing project, structure se finishing tak scope, aur desired finish level batao. Uske basis par quantity/estimate discussion ko better structure kiya ja sakta hai.';
       if(has(x,['renovation','repair','old house','purana ghar','existing'])) return 'Existing project mein pehle current condition samajhna important hai. Repair, alteration, extension, waterproofing, electrical/plumbing replacement aur finishing ko stage-wise plan kiya ja sakta hai. Structural cracks/major changes ke liye qualified engineer ki assessment useful hoti hai.';
@@ -78,15 +78,21 @@
       const newFields=document.getElementById('new-project-fields');
       const existingFields=document.getElementById('existing-project-fields');
       const consultationFields=document.getElementById('consultation-fields');
+      const interiorFields=document.getElementById('interior-fields');
       if(newFields)newFields.hidden=type!=='New Project';
       if(existingFields)existingFields.hidden=!(type==='Existing Project'||type==='Renovation / Repair');
       if(consultationFields)consultationFields.hidden=type!=='Consultation / Estimate';
+      if(interiorFields)interiorFields.hidden=type!=='Interior';
     };
     projectForm.querySelectorAll('input[name="projectType"]').forEach(r=>r.addEventListener('change',syncProjectFields));
     syncProjectFields();
   }
 
-  const params=new URLSearchParams(location.search),preset=params.get('service');
+  const params=new URLSearchParams(location.search),preset=params.get('service'),quoteType=params.get('type');
+  if(quoteType && document.querySelector('#project-form')){
+    const radio=[...document.querySelectorAll('input[name="projectType"]')].find(x=>x.value.toLowerCase()===decodeURIComponent(quoteType).toLowerCase());
+    if(radio){radio.checked=true;radio.dispatchEvent(new Event('change'))}
+  }
   if(preset&&document.querySelector('#project-form')){const cb=[...document.querySelectorAll('input[name="services"]')].find(x=>x.value.toLowerCase()===preset.toLowerCase());if(cb)cb.checked=true;}
   const turnkey=document.getElementById('turnkey');if(turnkey)turnkey.addEventListener('change',()=>{if(turnkey.checked)document.querySelectorAll('input[name="services"]').forEach(x=>x.checked=true);});
 })();
