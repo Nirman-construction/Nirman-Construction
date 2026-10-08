@@ -13,7 +13,7 @@
     const services=[...document.querySelectorAll('input[name="services"]:checked')].map(x=>x.value),message=val('message')||'No extra description';
     if(!name||!phone){alert('Please enter your name and phone number.');return false} if(!services.length){alert('Please select at least one service.');return false}
     const text=['Hello Nirman Construction,','',`Name: ${name}`,`Phone: ${phone}`,`Project Location: ${location}`,`Project Type: ${type}`,`Plot / Site Size: ${plot}`,`Work Stage: ${stage}`,`Floor / Level: ${floor}`,`Expected Start: ${timeline}`,`Services: ${services.join(', ')}`,'',`Project Description: ${message}`].join('\n');
-    window.open('https://wa.me/9188104241402?text='+encodeURIComponent(text),'_blank');return false;
+    window.open('https://wa.me/918810424102?text='+encodeURIComponent(text),'_blank');return false;
   };
 
   const ai=document.getElementById('ai-assistant');
