@@ -8,12 +8,30 @@
   window.sendWhatsApp=function(event){
     if(event)event.preventDefault();
     const val=id=>document.getElementById(id)?.value.trim()||'';
-    const name=val('name'),phone=val('phone'),location=val('location')||'Not provided',plot=document.getElementById('plotSize')?.value||'Not provided',stage=document.getElementById('workStage')?.value||'Not provided',floor=document.getElementById('floor')?.value||'Not provided',timeline=document.getElementById('timeline')?.value||'Not provided';
+    const name=val('name'),phone=val('phone'),location=val('location')||'Not provided';
     const type=document.querySelector('input[name="projectType"]:checked')?.value||'Not specified';
-    const services=[...document.querySelectorAll('input[name="services"]:checked')].map(x=>x.value),message=val('message')||'No extra description';
-    if(!name||!phone){alert('Please enter your name and phone number.');return false} if(!services.length){alert('Please select at least one service.');return false}
-    const text=['Hello Nirman Construction,','',`Name: ${name}`,`Phone: ${phone}`,`Project Location: ${location}`,`Project Type: ${type}`,`Plot / Site Size: ${plot}`,`Work Stage: ${stage}`,`Floor / Level: ${floor}`,`Expected Start: ${timeline}`,`Services: ${services.join(', ')}`,'',`Project Description: ${message}`].join('\n');
-    window.open('https://wa.me/918810424102?text='+encodeURIComponent(text),'_blank');return false;
+    let services=[...document.querySelectorAll('input[name="services"]:checked')].map(x=>x.value);
+    const message=val('message')||'No extra description';
+
+    if(!name||!phone){alert('Please enter your name and phone number.');return false}
+    if(!/^[0-9+\s-]{10,15}$/.test(phone)){alert('Please enter a valid phone number.');return false}
+    if(!services.length && type==='Consultation / Estimate') services=['General Consultation / Estimate'];
+    if(!services.length){alert('Please select at least one service.');return false}
+
+    const details=[`Name: ${name}`,`Phone / WhatsApp: ${phone}`,`Project Location: ${location}`,`Project Type: ${type}`];
+    if(type==='New Project'){
+      details.push(`Property Type: ${val('propertyType')}`,`Construction Scope: ${val('newScope')}`,`Plot / Site Size: ${val('plotSize')}`,`Floors / Level: ${val('floor')}`,`Approx. Built-up Area: ${val('builtArea')||'Not provided'}`,`Expected Start: ${val('timeline')}`);
+    }else if(type==='Existing Project' || type==='Renovation / Repair'){
+      details.push(`Current Work Stage: ${val('existingStage')}`,`Required Work: ${val('existingWork')}`,`Building / Project Age: ${val('buildingAge')}`,`Approx. Area: ${val('existingArea')||'Not provided'}`,`Issue / Required Work: ${val('existingIssue')||'Not provided'}`);
+    }else{
+      details.push(`Requirement: ${val('consultationType')}`,`Preferred Contact: ${val('preferredContact')}`);
+    }
+    details.push(`Services: ${services.join(', ')}`,'',`Additional Requirements: ${message}`);
+    const text=['Hello Nirman Construction,','',...details].join('\n');
+
+    // On a phone this opens the WhatsApp app when available; otherwise the normal WhatsApp web flow is used.
+    window.location.href='https://wa.me/918810424102?text='+encodeURIComponent(text);
+    return false;
   };
 
   const ai=document.getElementById('ai-assistant');
@@ -53,6 +71,21 @@
     toggle?.addEventListener('click',()=>ai.classList.toggle('open'));close?.addEventListener('click',()=>ai.classList.remove('open'));send?.addEventListener('click',()=>{ask(input.value);input.value='';});input?.addEventListener('keydown',e=>{if(e.key==='Enter'){ask(input.value);input.value='';}});
     ai.querySelectorAll('[data-ai]').forEach(b=>b.addEventListener('click',()=>{const q={services:'Aapki services kya kya hain?',turnkey:'Turnkey construction kya hota hai?',process:'Construction process kya hai?',estimate:'Estimate banane ke liye kya details chahiye?',interior:'Kitchen aur bedroom interior mein kya kya hota hai?'}[b.dataset.ai];ask(q);}));
   }
+  const projectForm=document.getElementById('project-form');
+  if(projectForm){
+    const syncProjectFields=()=>{
+      const type=document.querySelector('input[name="projectType"]:checked')?.value||'New Project';
+      const newFields=document.getElementById('new-project-fields');
+      const existingFields=document.getElementById('existing-project-fields');
+      const consultationFields=document.getElementById('consultation-fields');
+      if(newFields)newFields.hidden=type!=='New Project';
+      if(existingFields)existingFields.hidden=!(type==='Existing Project'||type==='Renovation / Repair');
+      if(consultationFields)consultationFields.hidden=type!=='Consultation / Estimate';
+    };
+    projectForm.querySelectorAll('input[name="projectType"]').forEach(r=>r.addEventListener('change',syncProjectFields));
+    syncProjectFields();
+  }
+
   const params=new URLSearchParams(location.search),preset=params.get('service');
   if(preset&&document.querySelector('#project-form')){const cb=[...document.querySelectorAll('input[name="services"]')].find(x=>x.value.toLowerCase()===preset.toLowerCase());if(cb)cb.checked=true;}
   const turnkey=document.getElementById('turnkey');if(turnkey)turnkey.addEventListener('change',()=>{if(turnkey.checked)document.querySelectorAll('input[name="services"]').forEach(x=>x.checked=true);});
