@@ -94,3 +94,11 @@ footer{background:#0c0c0b;color:#fff;padding-top:65px}.footer-grid{display:grid;
   .site-header nav a:last-child{border-bottom:0}
   .site-header .header-btn{display:none}
 }
+
+/* Modern floating contact icons */
+.quick-contact .contact-icon{width:27px;height:27px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.quick-contact.whatsapp .contact-icon{width:29px;height:29px;fill:currentColor;stroke:none}
+.quick-contact.whatsapp{background:#25D366!important;color:#fff!important;border-color:#25D366!important;box-shadow:0 5px 16px rgba(37,211,102,.28)}
+.quick-contact.call{background:#1769e0!important;color:#fff!important;border-color:#1769e0!important;box-shadow:0 5px 16px rgba(23,105,224,.25)}
+.quick-contact{transition:transform .18s ease,box-shadow .18s ease}
+.quick-contact:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
