@@ -21,3 +21,11 @@ IMPORTANT:
 - API key ko script.js, HTML, GitHub public repo ya screenshots mein kabhi na daalein.
 - Agar site GitHub se Vercel deploy hoti hai, is ZIP ke updated files apne local Nirman-construction project folder mein replace karein, phir GitHub par commit/push karein. api/chat.js root ke andar api folder mein hona chahiye.
 - Agar “AI abhi connect nahi ho pa raha” aaye, Vercel > Functions/Logs check karein aur OPENAI_API_KEY spelling/environment verify karein.
+
+
+UPLOAD KARNE KA IMPORTANT TARIKA:
+- ZIP extract karne par jo project files milengi, unhe apne GitHub repository ke ROOT mein upload/replace karein.
+- api/chat.js ka final path repository mein exactly api/chat.js hona chahiye (api folder index.html ke same level par).
+- Sirf ZIP ko nested folder ke andar rakh dene se endpoint /api/chat par nahi milega.
+- Push/commit ke baad Vercel deployment Ready hone dein, phir website ke AI chat se test karein.
+- OPENAI_API_KEY ko frontend file mein kabhi na rakhein.
