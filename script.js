@@ -196,3 +196,32 @@
   })();
 
 })();
+
+// Accessible mobile site navigation
+(() => {
+  const button = document.querySelector('.mobile-nav-toggle');
+  const nav = document.getElementById('site-navigation');
+  if (!button || !nav) return;
+
+  const setOpen = (open) => {
+    button.setAttribute('aria-expanded', String(open));
+    nav.classList.toggle('mobile-open', open);
+    button.querySelector('.menu-icon').textContent = open ? '×' : '☰';
+    button.querySelector('.menu-icon').setAttribute('aria-hidden', 'true');
+    button.querySelector('span:last-child').textContent = open ? 'Close' : 'Menu';
+  };
+
+  button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', (event) => {
+    if (event.target.closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setOpen(false);
+      button.focus();
+    }
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 760) setOpen(false);
+  });
+})();

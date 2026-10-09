@@ -80,3 +80,17 @@ footer{background:#0c0c0b;color:#fff;padding-top:65px}.footer-grid{display:grid;
 .founder-tag{display:none!important}
 
 .footer-grid>div:first-child>p{margin:0!important;font-size:12px;letter-spacing:.8px;color:#aaa!important;line-height:1.2}
+
+/* Mobile navigation */
+.mobile-nav-toggle{display:none}
+@media(max-width:760px){
+  .site-header{position:sticky;top:0;display:flex;flex-wrap:wrap;gap:0;min-height:76px;height:auto;padding:10px 5%;}
+  .site-header .brand{margin-right:auto}
+  .site-header .mobile-nav-toggle{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-left:auto;padding:11px 14px;border:1px solid #777;background:transparent;color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .mobile-nav-toggle .menu-icon{font-size:19px;line-height:1}
+  .site-header nav{display:none;order:3;position:absolute;top:100%;left:0;right:0;z-index:51;width:auto;max-height:calc(100vh - 90px);overflow-y:auto;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;padding:8px 5% 14px;background:rgba(17,17,15,.99);border-top:1px solid #3c392f;box-shadow:0 12px 24px #0005}
+  .site-header nav.mobile-open{display:flex}
+  .site-header nav a{display:block;padding:13px 4px;border-bottom:1px solid #ffffff18;font-size:15px;opacity:1}
+  .site-header nav a:last-child{border-bottom:0}
+  .site-header .header-btn{display:none}
+}
