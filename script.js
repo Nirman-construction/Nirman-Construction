@@ -152,7 +152,10 @@
         try{ waiting.textContent=await askAI(value); }
         catch(err){
           console.error('Nirman AI:',err);
-          waiting.textContent=err.message==='AI connection failed' ? systemFallback : 'Maaf kijiye, AI abhi connect nahi ho pa raha. Thodi der baad dobara try karein, ya +91 8810424102 par contact karein.';
+          const detail = (err && typeof err.message === 'string') ? err.message.trim() : '';
+          waiting.textContent = detail && detail !== 'AI connection failed'
+            ? detail.slice(0, 260)
+            : systemFallback;
         } finally {send.disabled=false; input.focus(); messages.scrollTop=messages.scrollHeight;}
       }
       toggle.addEventListener('click',()=>widget.classList.toggle('open'));
