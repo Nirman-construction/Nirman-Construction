@@ -108,9 +108,9 @@
   }
 
 
-  /* NIRMAN AI — single local-file-safe assistant */
+  /* NIRMAN AI — connected to secure server-side API */
   (function(){
-    function initNirmanAI(){
+    async function initNirmanAI(){
       const toggle=document.querySelector('.ai-toggle');
       const panel=document.querySelector('.ai-panel');
       const widget=document.querySelector('.ai-widget');
@@ -121,80 +121,54 @@
       if(!toggle||!panel||!input||!send||!messages) return;
       if(toggle.dataset.nirmanAiReady==='1') return;
       toggle.dataset.nirmanAiReady='1';
-
+      const history=[];
       const add=(text,who)=>{
         const el=document.createElement('div');
         el.className='ai-msg '+who;
         el.textContent=text;
         messages.appendChild(el);
         messages.scrollTop=messages.scrollHeight;
+        return el;
       };
-
-      const reply=(raw)=>{
-        const x=(raw||'').trim().toLowerCase();
-        if(!x) return 'Bilkul. Apna sawaal likhiye — main construction, interior, renovation, designing, estimate aur Nirman Construction ke baare mein help karunga.';
-        if(/^(hi|hello|hey|hii|helo|namaste|namaskar|salaam|salam|assalamualaikum|sat sri akal|sastrayakal|pranam|good morning|good afternoon|good evening)[!,. ]*$/i.test(x))
-          return 'Namaste! 👋 Welcome to Nirman Construction. Main AI hoon. Aap Hindi, Hinglish ya English mein baat kar sakte hain. Construction, interior, renovation, design ya estimate — jo chahiye poochiye.';
-        if(/founder|owner|malik|who.*founder|founder.*who|site engineer/.test(x))
-          return 'Nirman Construction ke founder aur site engineer Mr. Syed Shadab hain. Company Ranchi, Jharkhand se residential, commercial, civil, turnkey aur interior work handle karti hai.';
-        if(/about nirman|nirman construction kya|company ke bare|company about|aapki company|who are you/.test(x))
-          return 'Nirman Construction ek construction company hai jo residential, commercial, civil & RCC, brickwork, plaster, electrical, plumbing, tiles, putty, paint, renovation, turnkey aur interior solutions provide karti hai. Tagline: Where Dreams Take Shape.';
-        if(/service|services|kaam|work|kya kya karte|provide/.test(x))
-          return 'Hum residential, commercial, civil & RCC, brickwork, plaster, electrical, plumbing, tiles & flooring, putty & paint, renovation/repair, interior design & execution aur turnkey projects karte hain.';
-        if(/interior|kitchen|bedroom|wardrobe|false ceiling|tv unit|living room|modular/.test(x))
-          return 'Interior mein modular kitchen, wardrobe/storage, TV unit, false ceiling, lighting, bedroom, living/dining, bathroom finishes aur complete interior execution available hai.';
-        if(/new project|naya ghar|ghar banana|construction start|new house/.test(x))
-          return 'New Project ke liye property type, floors, approximate built-up area, district aur expected start date useful rahenge. Get a Quote form se enquiry bhej sakte hain.';
-        if(/existing project|ongoing|chal raha|already started/.test(x))
-          return 'Existing Project ke liye current stage aur required work batayein — RCC, brickwork, plaster, electrical, plumbing, tiles, paint ya remaining complete work.';
-        if(/renovation|repair|marammat|extension|alteration/.test(x))
-          return 'Renovation/Repair mein house/commercial renovation, extension, waterproofing, structural repair/strengthening aur interior renovation options hain.';
-        if(/design|designing|plan|floor plan|elevation|3d|drawing/.test(x))
-          return 'Designing mein house/floor plan, elevation, 3D exterior, interior design aur working/execution drawings ke options hain.';
-        if(/turnkey|complete work|full construction/.test(x))
-          return 'Turnkey project mein planning, civil/structure, masonry, electrical, plumbing, finishing aur coordinated execution ko integrated scope mein manage kiya ja sakta hai.';
-        if(/estimate|quotation|quote|rate|cost|price|budget|kitna lagega/.test(x))
-          return 'Estimate project type, built-up area, floors, district, specification aur scope par depend karta hai. Get a Quote form mein details select karke enquiry bhej sakte hain.';
-        if(/cement|sand|steel|saria|brick|concrete|material/.test(x))
-          return 'Main cement, sand, steel, brick, concrete aur basic construction quantity concepts par general guidance de sakta hoon. Exact quantity drawing, dimensions aur site conditions par depend karti hai.';
-        if(/jharkhand|district|location|kahan|kahaan|service area|kaam kahan/.test(x))
-          return 'Nirman Construction poore Jharkhand mein projects ke liye available hai. Get a Quote mein Jharkhand ka district select karke location de sakte hain.';
-        if(/contact|phone|mobile|number|call|whatsapp|email|mail/.test(x))
-          return 'Nirman Construction: +91 8810424102 | info@nirmanconstruction.net.in | Bariyatu, Ranchi, Jharkhand. WhatsApp par bhi directly contact kar sakte hain.';
-        if(/thank|thanks|dhany|shukriya/.test(x))
-          return 'Aapka welcome! 😊 Jab bhi construction ya interior se related help chahiye, pooch sakte hain.';
-        return 'Samajh gaya. Aap thoda detail mein batayein — project New hai, Existing, Renovation, Interior ya Designing? Main uske hisaab se next step suggest karunga.';
-      };
-
-      const sendMessage=()=>{
-        const value=input.value.trim();
-        if(!value) return;
-        add(value,'user');
-        input.value='';
-        setTimeout(()=>add(reply(value),'bot'),180);
-      };
-
+      const systemFallback='Maaf kijiye, abhi AI se connection nahi ho pa raha. Aap +91 8810424102 par call ya WhatsApp kar sakte hain.';
+      async function askAI(text){
+        const payload=[...history,{role:'user',content:text}].slice(-12);
+        const response=await fetch('/api/chat',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({messages:payload})
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok) throw new Error(data.error||'AI connection failed');
+        if(!data.reply) throw new Error('Empty AI response');
+        history.push({role:'user',content:text},{role:'assistant',content:data.reply});
+        while(history.length>12) history.shift();
+        return data.reply;
+      }
+      async function sendMessage(prefilled){
+        const value=(typeof prefilled==='string'?prefilled:input.value).trim();
+        if(!value||send.disabled) return;
+        add(value,'user'); input.value=''; send.disabled=true;
+        const waiting=add('Soch raha hoon…','bot');
+        try{ waiting.textContent=await askAI(value); }
+        catch(err){
+          console.error('Nirman AI:',err);
+          waiting.textContent=err.message==='AI connection failed' ? systemFallback : 'Maaf kijiye, AI abhi connect nahi ho pa raha. Thodi der baad dobara try karein, ya +91 8810424102 par contact karein.';
+        } finally {send.disabled=false; input.focus(); messages.scrollTop=messages.scrollHeight;}
+      }
       toggle.addEventListener('click',()=>widget.classList.toggle('open'));
       if(close) close.addEventListener('click',()=>widget.classList.remove('open'));
-      send.addEventListener('click',sendMessage);
+      send.addEventListener('click',()=>sendMessage());
       input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage();}});
       document.querySelectorAll('.ai-quick button').forEach(btn=>{
         btn.addEventListener('click',()=>{
-          const q=({
-            services:'What services do you provide?',
-            turnkey:'What is turnkey construction?',
-            interior:'What interior work do you provide?',
-            quote:'I want a quotation'
-          })[btn.dataset.ai] || btn.textContent;
-          add(q,'user');
-          setTimeout(()=>add(reply(q),'bot'),180);
+          const q=({services:'Aap kaun-kaun si construction services provide karte hain?',turnkey:'Turnkey construction kya hota hai?',interior:'Aap kaun-kaun se interior work karte hain?',quote:'Mujhe apne project ka quotation chahiye. Kaun si details deni hongi?'})[btn.dataset.ai]||btn.textContent;
+          sendMessage(q);
         });
       });
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initNirmanAI);
     else initNirmanAI();
   })();
-
 })();
 
 // Accessible mobile site navigation
