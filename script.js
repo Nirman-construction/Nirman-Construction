@@ -90,7 +90,7 @@
       });
     }
 
-    window.sendWhatsApp=function(event){
+    window.sendWhatsApp=async function(event){
       event.preventDefault();
       const get=id=>document.getElementById(id)?.value?.trim()||'';
       const name=get('name'), phone=get('phone'), location=get('location'), type=get('projectType'), extra=get('message');
@@ -100,17 +100,43 @@
         const lab=el.closest('label')?.firstChild?.textContent?.trim()||el.id;
         return el.value?`${lab}: ${el.value}`:'';
       }).filter(Boolean);
-      const lines=['Hello Nirman Construction,','',`Name: ${name}`,`Mobile: ${phone}`,`Location: ${location}`,`Requirement: ${type}`,...labels,'',`Additional Requirement: ${extra||'None'}`];
-      const url='https://wa.me/918810424102?text='+encodeURIComponent(lines.join('\\n'));
-      window.open(url,'_blank');
+      const payload={kind:'enquiry',name,phone,location,type,details:labels.join(' | '),message:extra, page:locationPath(), submittedAt:new Date().toISOString()};
+      const status=document.getElementById('enquiry-status');
+      const endpoint=window.NIRMAN_SHEETS_ENDPOINT||'';
+      if(!endpoint){alert('Enquiry system abhi setup nahi hua hai. Please call/WhatsApp +91 8810424102.');return false;}
+      const submit=projectForm.querySelector('[type="submit"]'); if(submit){submit.disabled=true;submit.textContent='Submitting…';}
+      try{
+        await fetch(endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams(payload).toString()});
+        if(status){status.hidden=false;status.textContent='Thank you! Aapki enquiry submit ho gayi hai. Nirman Construction aapse contact karega.';}
+        projectForm.reset();dynamic.hidden=true;dynamicContent.innerHTML='';
+      }catch(err){alert('Enquiry save nahi ho payi. Please call/WhatsApp +91 8810424102.');}
+      finally{if(submit){submit.disabled=false;submit.textContent='Submit Enquiry ✓';}}
       return false;
     };
+    function locationPath(){return window.location.pathname.split('/').pop()||'index.html';}
   }
 
 
-  /* NIRMAN AI — connected to secure server-side API */
+  /* FREE Google Sheets visitor counter and visit logging */
   (function(){
-    async function initNirmanAI(){
+    const endpoint=window.NIRMAN_SHEETS_ENDPOINT||'';
+    const footer=document.querySelector('.copyright');
+    if(footer){const counter=document.createElement('span');counter.id='visitor-counter';counter.style.cssText='display:block;margin-top:8px;font-size:12px;opacity:.8';counter.textContent='Website visits: counting setup pending';footer.appendChild(counter);}
+    if(!endpoint)return;
+    try{
+      if(!sessionStorage.getItem('nirman_visit_logged')){
+        fetch(endpoint,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({kind:'visit',page:location.pathname,referrer:document.referrer||'',visitedAt:new Date().toISOString()}).toString()});
+        sessionStorage.setItem('nirman_visit_logged','1');
+      }
+      const cb='nirmanVisitorCount_'+Date.now();
+      window[cb]=function(data){const el=document.getElementById('visitor-counter');if(el&&data&&typeof data.visits==='number')el.textContent='Total website visits: '+data.visits;try{delete window[cb]}catch(e){};script.remove();};
+      const script=document.createElement('script');script.src=endpoint+'?action=stats&callback='+cb;script.onerror=()=>{const el=document.getElementById('visitor-counter');if(el)el.textContent='Website visitor counter temporarily unavailable';};document.head.appendChild(script);
+    }catch(e){}
+  })();
+
+  /* NIRMAN FREE CHAT ASSISTANT — no paid API required */
+  (function(){
+    function initNirmanAI(){
       const toggle=document.querySelector('.ai-toggle');
       const panel=document.querySelector('.ai-panel');
       const widget=document.querySelector('.ai-widget');
@@ -118,59 +144,31 @@
       const input=document.getElementById('ai-input');
       const send=document.getElementById('ai-send');
       const messages=document.getElementById('ai-messages');
-      if(!toggle||!panel||!input||!send||!messages) return;
-      if(toggle.dataset.nirmanAiReady==='1') return;
+      if(!toggle||!panel||!input||!send||!messages||toggle.dataset.nirmanAiReady==='1') return;
       toggle.dataset.nirmanAiReady='1';
-      const history=[];
-      const add=(text,who)=>{
-        const el=document.createElement('div');
-        el.className='ai-msg '+who;
-        el.textContent=text;
-        messages.appendChild(el);
-        messages.scrollTop=messages.scrollHeight;
-        return el;
-      };
-      const systemFallback='Maaf kijiye, abhi AI se connection nahi ho pa raha. Aap +91 8810424102 par call ya WhatsApp kar sakte hain.';
-      async function askAI(text){
-        const payload=[...history,{role:'user',content:text}].slice(-12);
-        const response=await fetch('/api/chat',{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({messages:payload})
-        });
-        const data=await response.json().catch(()=>({}));
-        if(!response.ok) throw new Error(data.error||'AI connection failed');
-        if(!data.reply) throw new Error('Empty AI response');
-        history.push({role:'user',content:text},{role:'assistant',content:data.reply});
-        while(history.length>12) history.shift();
-        return data.reply;
-      }
-      async function sendMessage(prefilled){
-        const value=(typeof prefilled==='string'?prefilled:input.value).trim();
-        if(!value||send.disabled) return;
-        add(value,'user'); input.value=''; send.disabled=true;
-        const waiting=add('Soch raha hoon…','bot');
-        try{ waiting.textContent=await askAI(value); }
-        catch(err){
-          console.error('Nirman AI:',err);
-          const detail = (err && typeof err.message === 'string') ? err.message.trim() : '';
-          waiting.textContent = detail && detail !== 'AI connection failed'
-            ? detail.slice(0, 260)
-            : systemFallback;
-        } finally {send.disabled=false; input.focus(); messages.scrollTop=messages.scrollHeight;}
-      }
+      const add=(text,who)=>{const el=document.createElement('div');el.className='ai-msg '+who;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;};
+      const answers=[
+        {keys:['service','services','kaam','kya kya','kya karte','construction work'],answer:'Nirman Construction Ranchi aur aas-paas residential aur commercial construction, RCC/structure, brickwork, plaster, electrical, plumbing, tiles, putty, paint, renovation/repair aur finishing work mein madad karta hai. Apni requirement batane ke liye Get Quote form bharein.'},
+        {keys:['turnkey','complete construction','poora ghar','pura ghar'],answer:'Turnkey construction mein project ko agreed scope ke mutabik planning se lekar civil work aur finishing tak coordinate kiya ja sakta hai. Exact scope, material aur rate site details dekhkar confirm honge.'},
+        {keys:['interior','modular kitchen','wardrobe','false ceiling'],answer:'Interior work ke liye modular kitchen, wardrobe/storage, false ceiling, lighting aur selected interior execution discuss kar sakte hain. Area aur requirement ke saath enquiry bhejein.'},
+        {keys:['quote','quotation','estimate','rate','price','cost','budget','kharcha','kitna paisa'],answer:'Quotation ke liye project location, work type, approximate area/floors, material included hai ya nahi, aur start date batayein. Get Quote form bharein; details WhatsApp par Nirman Construction ko bhejne ke liye ready ho jayengi.'},
+        {keys:['contact','phone','call','number','whatsapp','baat'],answer:'Aap Nirman Construction ko +91 8810424102 par call ya WhatsApp kar sakte hain. Email: info@nirmanconstruction.net.in. Location: Bariyatu, Ranchi, Jharkhand.'},
+        {keys:['location','ranchi','jharkhand','area','kahan'],answer:'Nirman Construction Bariyatu, Ranchi se residential, commercial aur civil construction enquiries leta hai. Jharkhand ke project ki location enquiry form mein select karein; service availability confirm ki jayegi.'},
+        {keys:['site visit','visit','ghar dekh','plot'],answer:'Site visit ke liye apna naam, mobile number, project location aur kaam ki details Get Quote form se bhejein. Team aapse follow-up kar sakegi.'},
+        {keys:['start','kab','time','timeline','shuru'],answer:'Project timeline kaam ke scope, area, design, material aur site conditions par depend karta hai. Enquiry mein expected start date batayein, phir schedule discuss kiya ja sakta hai.'},
+        {keys:['material','cement','steel','sand','brick','eent'],answer:'Material supply aur labour/material-included scope project ke hisaab se confirm hota hai. Enquiry mein batayein ki aapko labour only chahiye ya material ke saath work.'},
+        {keys:['hello','hi','namaste','hey'],answer:'Namaste! 👋 Nirman Construction mein aapka swagat hai. Aapko new construction, renovation, civil work, interior ya quotation mein kis cheez ki help chahiye?'},
+        {keys:['quote form','get quote','enquiry','inquiry','details'],answer:'Enquiry bhejne ke liye website ke Contact page par “Get a Quote” form bharein. Submit karne par WhatsApp mein aapki details ka message khulega—use Send zaroor karein, tabhi humein enquiry milegi.'}
+      ];
+      function answerFor(text){const q=text.toLowerCase();for(const item of answers){if(item.keys.some(k=>q.includes(k)))return item.answer;}return 'Main Nirman Construction ka free website assistant hoon. Main services, quotation, interior, renovation aur contact ke common questions mein help kar sakta hoon. Aap apna question thoda aur specific likhein, ya Contact page par Get a Quote form bharein. Enquiry bhejne ke liye WhatsApp message mein Send dabana zaroori hai.';}
+      function sendMessage(prefilled){const value=(typeof prefilled==='string'?prefilled:input.value).trim();if(!value)return;add(value,'user');input.value='';send.disabled=true;window.setTimeout(()=>{add(answerFor(value),'bot');send.disabled=false;input.focus();messages.scrollTop=messages.scrollHeight;},180);}
       toggle.addEventListener('click',()=>widget.classList.toggle('open'));
-      if(close) close.addEventListener('click',()=>widget.classList.remove('open'));
+      if(close)close.addEventListener('click',()=>widget.classList.remove('open'));
       send.addEventListener('click',()=>sendMessage());
       input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendMessage();}});
-      document.querySelectorAll('.ai-quick button').forEach(btn=>{
-        btn.addEventListener('click',()=>{
-          const q=({services:'Aap kaun-kaun si construction services provide karte hain?',turnkey:'Turnkey construction kya hota hai?',interior:'Aap kaun-kaun se interior work karte hain?',quote:'Mujhe apne project ka quotation chahiye. Kaun si details deni hongi?'})[btn.dataset.ai]||btn.textContent;
-          sendMessage(q);
-        });
-      });
+      document.querySelectorAll('.ai-quick button').forEach(btn=>btn.addEventListener('click',()=>{const q=({services:'Aap kaun-kaun si construction services provide karte hain?',turnkey:'Turnkey construction kya hota hai?',interior:'Aap kaun-kaun se interior work karte hain?',quote:'Mujhe apne project ka quotation chahiye. Kaun si details deni hongi?'})[btn.dataset.ai]||btn.textContent;sendMessage(q);}));
     }
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initNirmanAI);
-    else initNirmanAI();
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initNirmanAI);else initNirmanAI();
   })();
 })();
 
