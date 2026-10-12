@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nirmanconstruction.net.in/sitemap.xml
