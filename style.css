@@ -102,3 +102,13 @@ footer{background:#0c0c0b;color:#fff;padding-top:65px}.footer-grid{display:grid;
 .quick-contact.call{background:#1769e0!important;color:#fff!important;border-color:#1769e0!important;box-shadow:0 5px 16px rgba(23,105,224,.25)}
 .quick-contact{transition:transform .18s ease,box-shadow .18s ease}
 .quick-contact:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+
+/* Construction gallery: six distinct, high-resolution image sources */
+.construction-gallery{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.construction-gallery .project-card{height:320px;min-height:320px;background:#111;overflow:hidden}
+.construction-gallery .project-card img{width:100%;height:100%;object-fit:cover;image-rendering:auto;filter:none;opacity:1}
+.construction-gallery .project-card div{background:linear-gradient(transparent,rgba(0,0,0,.92));}
+@media(max-width:900px){.construction-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.construction-gallery .project-card{height:280px;min-height:280px}}
+@media(max-width:560px){.construction-gallery{grid-template-columns:1fr}.construction-gallery .project-card{height:260px;min-height:260px}}
+/* Keep the founder portrait in the dedicated founder section only, not in the hero. */
+.hero-founder{display:none!important}
